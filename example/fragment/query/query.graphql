@@ -1,0 +1,23 @@
+query ConversationByIDQuery($id: ID!) {
+#    conversation(id: $id) {
+#        messages {
+#            ...answerFragment
+#            ...questionFragment
+#            text
+#        }
+#    }
+    conversation(id: $id) {
+        hello {
+            helloWorldMessage
+        }
+    }
+}
+
+#fragment answerFragment on ChatAnswerMessage {
+#        answer
+#        questionInt: question
+#}
+#
+#fragment questionFragment on ChatQuestionMessage {
+#    question
+#}

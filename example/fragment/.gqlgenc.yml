@@ -1,0 +1,15 @@
+model:
+  filename: ./gen/models_gen.go
+client:
+  filename: ./gen/client.go
+models:
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  DateTime:
+    model: github.com/99designs/gqlgen/graphql.Time
+schema:
+  - "./schema/*.graphqls"
+query:
+  - "./query/*.graphql"
+generate:
+  clientV2: true

@@ -23,6 +23,28 @@ type ResponseField struct {
 	Type             types.Type
 	Tags             []string
 	ResponseFields   ResponseFieldList
+	typesToCreate    map[string]types.Type
+}
+
+func (rs ResponseField) TypesToCreate() map[string]types.Type {
+	ttc := make(map[string]types.Type)
+	for k, v := range rs.typesToCreate {
+		ttc[k] = v
+	}
+	for k, v := range rs.ResponseFields.TypesToCreate() {
+		ttc[k] = v
+	}
+	return ttc
+}
+
+func (rfs ResponseFieldList) TypesToCreate() map[string]types.Type {
+	ttc := make(map[string]types.Type)
+	for _, rs := range []*ResponseField(rfs) {
+		for k, v := range rs.TypesToCreate() {
+			ttc[k] = v
+		}
+	}
+	return ttc
 }
 
 type ResponseFieldList []*ResponseField
@@ -142,6 +164,7 @@ func (r *SourceGenerator) NewResponseField(selection ast.Selection) *ResponseFie
 		fieldsResponseFields := r.NewResponseFields(selection.SelectionSet)
 
 		var baseType types.Type
+		typesToCreate := make(map[string]types.Type)
 		switch {
 		case fieldsResponseFields.IsBasicType():
 			baseType = r.Type(selection.Definition.Type.Name())
@@ -150,7 +173,13 @@ func (r *SourceGenerator) NewResponseField(selection ast.Selection) *ResponseFie
 			// if a child field is fragment, this field type became fragment.
 			baseType = fieldsResponseFields[0].Type
 		case fieldsResponseFields.IsStructType():
-			baseType = fieldsResponseFields.StructType()
+			//r.cfg.Models[]
+			structType := fieldsResponseFields.StructType()
+			name := selection.Definition.Type.Name() + "StructType"
+			typesToCreate[name] = structType
+			//r.cfg.Models.Add(name, fmt.Sprintf("%s.%s", r.client.Pkg(), templates.ToGo(name)))
+			baseType = types.NewNamed(types.NewTypeName(0, r.client.Pkg(), templates.ToGo(name), structType), structType, nil)
+			//r.Type(name)
 		default:
 			// ここにきたらバグ
 			// here is bug
@@ -171,6 +200,7 @@ func (r *SourceGenerator) NewResponseField(selection ast.Selection) *ResponseFie
 			Type:           typ,
 			Tags:           tags,
 			ResponseFields: fieldsResponseFields,
+			typesToCreate: typesToCreate,
 		}
 
 	case *ast.FragmentSpread:
@@ -219,7 +249,8 @@ func (r *SourceGenerator) OperationArguments(variableDefinitions ast.VariableDef
 
 // Typeの引数に渡すtypeNameは解析した結果からselectionなどから求めた型の名前を渡さなければいけない
 func (r *SourceGenerator) Type(typeName string) types.Type {
-	goType, err := r.binder.FindTypeFromName(r.cfg.Models[typeName].Model[0])
+	model := r.cfg.Models[typeName].Model[0]
+	goType, err := r.binder.FindTypeFromName(model)
 	if err != nil {
 		// 実装として正しいtypeNameを渡していれば必ず見つかるはずなのでpanic
 		panic(fmt.Sprintf("%+v", err))

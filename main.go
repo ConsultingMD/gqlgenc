@@ -31,4 +31,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%+v", err.Error())
 		os.Exit(4)
 	}
+
+	//err = os.Remove(cfg.Model.Filename)
+	//if err != nil {
+	//	fmt.Fprintf(os.Stderr, "%+v", err.Error())
+	//}
 }

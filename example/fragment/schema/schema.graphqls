@@ -1,0 +1,32 @@
+type Query {
+    conversation(id: ID!): Conversation
+}
+
+type Conversation {
+    id: ID!
+    messages: [ChatMessage!]!
+    hello: HelloWorld
+}
+
+type HelloWorld {
+    helloWorldMessage: String
+}
+
+interface ChatMessage {
+    text: String
+}
+
+type ChatAnswerMessage implements ChatMessage {
+    answer: String!
+    question: String!
+    text: String
+}
+
+type ChatQuestionMessage implements ChatMessage {
+    question: Int!
+    text: String
+}
+
+type Mutation {
+    something: String!
+}

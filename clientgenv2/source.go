@@ -125,8 +125,9 @@ func queryString(queryDocument *ast.QueryDocument) string {
 }
 
 type OperationResponse struct {
-	Name string
-	Type types.Type
+	Name          string
+	Type          types.Type
+	TypesToCreate map[string]types.Type
 }
 
 func (s *Source) OperationResponses() ([]*OperationResponse, error) {
@@ -138,8 +139,9 @@ func (s *Source) OperationResponses() ([]*OperationResponse, error) {
 			return nil, xerrors.New(fmt.Sprintf("%s is duplicated", name))
 		}
 		operationResponse = append(operationResponse, &OperationResponse{
-			Name: name,
-			Type: responseFields.StructType(),
+			Name:          name,
+			Type:          responseFields.StructType(),
+			TypesToCreate: responseFields.TypesToCreate(),
 		})
 	}
 
@@ -149,6 +151,13 @@ func (s *Source) OperationResponses() ([]*OperationResponse, error) {
 			name,
 			fmt.Sprintf("%s.%s", s.sourceGenerator.client.Pkg(), templates.ToGo(name)),
 		)
+
+		for name, _ := range operationResponse.TypesToCreate {
+			s.sourceGenerator.cfg.Models.Add(
+				name,
+				fmt.Sprintf("%s.%s", s.sourceGenerator.client.Pkg(), templates.ToGo(name)),
+			)
+		}
 	}
 
 	return operationResponse, nil

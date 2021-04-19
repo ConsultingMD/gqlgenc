@@ -35,8 +35,13 @@ type {{ .Query.Name | go }} {{ .Query.Type | ref }}
 {{- end }}
 
 {{- range $name, $element := .OperationResponse }}
+    {{- range $name, $element := .TypesToCreate }}
+        type {{ $name | go }} {{ $element | ref }}
+    {{- end }}
 	type  {{ .Name | go  }} {{ .Type | ref }}
 {{- end }}
+
+
 
 {{- range $model := .Operation}}
 	const {{ $model.Name|go }}Document = `{{ $model.Operation }}`
