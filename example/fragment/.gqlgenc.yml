@@ -12,8 +12,4 @@ schema:
 query:
   - "./query/*.graphql"
 generate:
-  suffix:
-    mutation: Payload
-  prefix:
-    mutation: Hoge
   clientV2: true
