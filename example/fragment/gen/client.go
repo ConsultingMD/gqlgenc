@@ -24,30 +24,16 @@ type Mutation struct {
 	Something string "json:\"something\" graphql:\"something\""
 }
 type AnswerFragment struct {
-	Answer *struct {
-		SelectionID string "json:\"selectionId\" graphql:\"selectionId\""
-	} "json:\"answer\" graphql:\"answer\""
+	Answer ChatSingleSelectAnswer "json:\"answer\" graphql:\"answer\""
 }
 type QuestionFragment struct {
-	Question *struct {
-		Options []*struct {
-			ID   string "json:\"id\" graphql:\"id\""
-			Text string "json:\"text\" graphql:\"text\""
-		} "json:\"options\" graphql:\"options\""
-	} "json:\"question\" graphql:\"question\""
+	Question ChatSingleSelectQuestion "json:\"question\" graphql:\"question\""
 }
 type ConversationByIDQuery struct {
 	Conversation *struct {
 		Messages []*struct {
-			Answer *struct {
-				SelectionID string "json:\"selectionId\" graphql:\"selectionId\""
-			} "json:\"answer\" graphql:\"answer\""
-			Question *struct {
-				Options []*struct {
-					ID   string "json:\"id\" graphql:\"id\""
-					Text string "json:\"text\" graphql:\"text\""
-				} "json:\"options\" graphql:\"options\""
-			} "json:\"question\" graphql:\"question\""
+			Answer   ChatSingleSelectAnswer   "json:\"answer\" graphql:\"answer\""
+			Question ChatSingleSelectQuestion "json:\"question\" graphql:\"question\""
 		} "json:\"messages\" graphql:\"messages\""
 	} "json:\"conversation\" graphql:\"conversation\""
 }

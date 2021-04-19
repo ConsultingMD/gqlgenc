@@ -8,7 +8,7 @@ query ConversationByIDQuery($id: ID!) {
 }
 
 fragment answerFragment on ChatAnswerMessage {
-    answer {
+        answer {
         ... on ChatSingleSelectAnswer {
             selectionId
         }
