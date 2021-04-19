@@ -1,0 +1,36 @@
+type Query {
+    conversation(id: ID!): Conversation
+}
+
+type Conversation {
+    id: ID!
+    messages: [ChatMessage!]!
+}
+
+interface ChatMessage {
+    text: String
+}
+
+type ChatAnswerMessage implements ChatMessage {
+    answer: ChatSingleSelectAnswer!
+    text: String
+}
+
+type ChatSingleSelectAnswer {
+    selectionId: ID!
+}
+type ChatQuestionMessage implements ChatMessage {
+    question: ChatSingleSelectQuestion!
+    text: String
+}
+type ChatSingleSelectQuestion {
+    options: [ChatSelectOption!]!
+}
+type ChatSelectOption {
+    id: ID!
+    text: String!
+}
+
+type Mutation {
+    something: String!
+}

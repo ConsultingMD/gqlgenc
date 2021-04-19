@@ -148,7 +148,7 @@ func (r *SourceGenerator) NewResponseField(selection ast.Selection) *ResponseFie
 		case fieldsResponseFields.IsFragment():
 			// 子フィールドがFragmentの場合はこのFragmentがフィールドの型になる
 			// if a child field is fragment, this field type became fragment.
-			baseType = fieldsResponseFields[0].Type
+			baseType = types.NewPointer(fieldsResponseFields[0].Type)
 		case fieldsResponseFields.IsStructType():
 			baseType = fieldsResponseFields.StructType()
 		default:

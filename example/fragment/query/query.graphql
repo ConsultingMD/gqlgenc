@@ -1,0 +1,28 @@
+query ConversationByIDQuery($id: ID!) {
+    conversation(id: $id) {
+        messages {
+            ...answerFragment
+            ...questionFragment
+        }
+    }
+}
+
+fragment answerFragment on ChatAnswerMessage {
+    answer {
+        ... on ChatSingleSelectAnswer {
+            selectionId
+        }
+    }
+
+}
+
+fragment questionFragment on ChatQuestionMessage {
+    question {
+        ... on ChatSingleSelectQuestion {
+            options {
+                id
+                text
+            }
+        }
+    }
+}
