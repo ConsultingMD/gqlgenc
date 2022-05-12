@@ -30,6 +30,7 @@ linters:
     - gochecknoglobals
     - godox
     - maligned
+    - golint
     - gocognit
     - gocyclo
     - interfacer
@@ -40,6 +41,12 @@ linters:
     - forbidigo
     - cyclop
     - govet
+    - errname
+    - varnamelen
+    - nilnil
+    - scopelint
+    - structcheck
+    - typecheck
   fast: false
 
 issues:

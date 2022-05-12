@@ -13,10 +13,10 @@ import (
 	"github.com/99designs/gqlgen/codegen/config"
 	"github.com/Yamashou/gqlgenc/client"
 	"github.com/Yamashou/gqlgenc/introspection"
-	"github.com/vektah/gqlparser/v2"
+	"github.com/vektah/gqlparser/v2" //nolint
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/validator"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Config extends the gqlgen basic config
@@ -178,9 +178,7 @@ func LoadConfig(filename string) (*Config, error) {
 	}
 
 	models := make(config.TypeMap)
-	if cfg.Models != nil {
-		models = cfg.Models
-	}
+	models = cfg.Models
 
 	sources := []*ast.Source{}
 
@@ -200,7 +198,7 @@ func LoadConfig(filename string) (*Config, error) {
 		Model:  cfg.Model,
 		Models: models,
 		// TODO: gqlgen must be set exec but client not used
-		Exec:       config.PackageConfig{Filename: "generated.go"},
+		Exec:       config.ExecConfig{Filename: "generated.go"},
 		Directives: map[string]config.DirectiveConfig{},
 		Sources:    sources,
 	}
@@ -267,7 +265,7 @@ func (c *Config) loadRemoteSchema(ctx context.Context) (*ast.Schema, error) {
 }
 
 func (c *Config) loadLocalSchema() (*ast.Schema, error) {
-	schema, err := gqlparser.LoadSchema(c.GQLConfig.Sources...)
+	schema, err := gqlparser.LoadSchema(c.GQLConfig.Sources...) //nolint
 	if err != nil {
 		return nil, err
 	}
@@ -276,10 +274,11 @@ func (c *Config) loadLocalSchema() (*ast.Schema, error) {
 }
 
 type GenerateConfig struct {
-	Prefix        *NamingConfig `yaml:"prefix,omitempty"`
-	Suffix        *NamingConfig `yaml:"suffix,omitempty"`
-	UnamedPattern string        `yaml:"unamedPattern,omitempty"`
-	Client        *bool         `yaml:"client,omitempty"`
+	Prefix              *NamingConfig `yaml:"prefix,omitempty"`
+	Suffix              *NamingConfig `yaml:"suffix,omitempty"`
+	UnamedPattern       string        `yaml:"unamedPattern,omitempty"`
+	Client              *bool         `yaml:"client,omitempty"`
+	ClientInterfaceName *string       `yaml:"clientInterfaceName,omitempty"`
 	// if true, used client v2 in generate code
 	ClientV2 bool `yaml:"clientV2,omitempty"`
 }
@@ -294,6 +293,14 @@ func (c *GenerateConfig) ShouldGenerateClient() bool {
 	}
 
 	return true
+}
+
+func (c *GenerateConfig) GetClientInterfaceName() *string {
+	if c == nil {
+		return nil
+	}
+
+	return c.ClientInterfaceName
 }
 
 type NamingConfig struct {

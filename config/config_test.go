@@ -48,15 +48,15 @@ func TestLoadConfig(t *testing.T) {
 
 	t.Run("globbed filenames", func(t *testing.T) {
 		t.Parallel()
-		c, err := LoadConfig("testdata/cfg/glob.yml")
+		loadConfig, err := LoadConfig("testdata/cfg/glob.yml")
 		require.NoError(t, err)
 
 		if runtime.GOOS == "windows" {
-			require.Equal(t, c.SchemaFilename[0], `testdata\cfg\glob\bar\bar with spaces.graphql`)
-			require.Equal(t, c.SchemaFilename[1], `testdata\cfg\glob\foo\foo.graphql`)
+			require.Equal(t, loadConfig.SchemaFilename[0], `testdata\cfg\glob\bar\bar with spaces.graphql`)
+			require.Equal(t, loadConfig.SchemaFilename[1], `testdata\cfg\glob\foo\foo.graphql`)
 		} else {
-			require.Equal(t, c.SchemaFilename[0], "testdata/cfg/glob/bar/bar with spaces.graphql")
-			require.Equal(t, c.SchemaFilename[1], "testdata/cfg/glob/foo/foo.graphql")
+			require.Equal(t, loadConfig.SchemaFilename[0], "testdata/cfg/glob/bar/bar with spaces.graphql")
+			require.Equal(t, loadConfig.SchemaFilename[1], "testdata/cfg/glob/foo/foo.graphql")
 		}
 	})
 
@@ -72,14 +72,14 @@ func TestLoadConfig(t *testing.T) {
 
 	t.Run("generate", func(t *testing.T) {
 		t.Parallel()
-		c, err := LoadConfig("testdata/cfg/generate.yml")
+		loadConfig, err := LoadConfig("testdata/cfg/generate.yml")
 		require.NoError(t, err)
-		require.Equal(t, true, c.Generate.ShouldGenerateClient())
-		require.Equal(t, c.Generate.UnamedPattern, "Empty")
-		require.Equal(t, c.Generate.Suffix.Mutation, "Bar")
-		require.Equal(t, c.Generate.Suffix.Query, "Foo")
-		require.Equal(t, c.Generate.Prefix.Mutation, "Hoge")
-		require.Equal(t, c.Generate.Prefix.Query, "Data")
+		require.Equal(t, true, loadConfig.Generate.ShouldGenerateClient())
+		require.Equal(t, loadConfig.Generate.UnamedPattern, "Empty")
+		require.Equal(t, loadConfig.Generate.Suffix.Mutation, "Bar")
+		require.Equal(t, loadConfig.Generate.Suffix.Query, "Foo")
+		require.Equal(t, loadConfig.Generate.Prefix.Mutation, "Hoge")
+		require.Equal(t, loadConfig.Generate.Prefix.Query, "Data")
 	})
 
 	t.Run("generate skip client", func(t *testing.T) {
@@ -103,7 +103,7 @@ func TestLoadConfig_LoadSchema(t *testing.T) {
 		config := &Config{
 			GQLConfig: &config.Config{},
 			Endpoint: &EndPointConfig{
-				URL: mockServer.URL,
+				URL: mockServer.URL, //nolint
 			},
 		}
 
@@ -120,12 +120,12 @@ func TestLoadConfig_LoadSchema(t *testing.T) {
 		config := &Config{
 			GQLConfig: &config.Config{},
 			Endpoint: &EndPointConfig{
-				URL: mockServer.URL,
+				URL: mockServer.URL, //nolint
 			},
 		}
 
 		err := config.LoadSchema(context.Background())
-		require.Equal(t, fmt.Sprintf("load remote schema failed: validation error: %s:0: OBJECT must define one or more fields.", mockServer.URL), err.Error())
+		require.Equal(t, fmt.Sprintf("load remote schema failed: validation error: %s:0: OBJECT must define one or more fields.", mockServer.URL), err.Error()) //nolint
 	})
 }
 
@@ -138,7 +138,7 @@ func newMockRemoteServer(t *testing.T, response interface{}) (mock *mockRemoteSe
 	t.Helper()
 
 	mock = &mockRemoteServer{
-		Server: httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		Server: httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
 			var err error
 			mock.body, err = ioutil.ReadAll(req.Body)
 			require.NoError(t, err)
@@ -154,12 +154,12 @@ func newMockRemoteServer(t *testing.T, response interface{}) (mock *mockRemoteSe
 				require.NoError(t, err)
 			}
 
-			_, err = rw.Write(responseBody)
+			_, err = writer.Write(responseBody)
 			require.NoError(t, err)
 		})),
 	}
 
-	return mock, func() { mock.Close() }
+	return mock, func() { mock.Close() } //nolint
 }
 
 type responseFromFile string

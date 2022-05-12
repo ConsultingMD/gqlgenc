@@ -270,6 +270,7 @@ func (p parser) parseTypeSystemDefinition(typeVale *FullType) *ast.Definition {
 	}
 
 	panic(fmt.Sprintf("not match Kind: %s", typeVale.Kind))
+	return nil
 }
 
 func (p parser) buildInputValue(input *InputValue) *ast.ArgumentDefinition {
