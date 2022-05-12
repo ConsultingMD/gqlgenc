@@ -13,10 +13,10 @@ import (
 	"github.com/99designs/gqlgen/codegen/config"
 	"github.com/Yamashou/gqlgenc/client"
 	"github.com/Yamashou/gqlgenc/introspection"
-	"github.com/vektah/gqlparser/v2"
+	"github.com/vektah/gqlparser/v2" //nolint
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/validator"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Config extends the gqlgen basic config
@@ -178,9 +178,7 @@ func LoadConfig(filename string) (*Config, error) {
 	}
 
 	models := make(config.TypeMap)
-	if cfg.Models != nil {
-		models = cfg.Models
-	}
+	models = cfg.Models
 
 	sources := []*ast.Source{}
 
@@ -267,7 +265,7 @@ func (c *Config) loadRemoteSchema(ctx context.Context) (*ast.Schema, error) {
 }
 
 func (c *Config) loadLocalSchema() (*ast.Schema, error) {
-	schema, err := gqlparser.LoadSchema(c.GQLConfig.Sources...)
+	schema, err := gqlparser.LoadSchema(c.GQLConfig.Sources...) //nolint
 	if err != nil {
 		return nil, err
 	}

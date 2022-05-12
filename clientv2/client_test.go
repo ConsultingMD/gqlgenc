@@ -37,19 +37,20 @@ func TestUnmarshal(t *testing.T) {
 		r := &fakeRes{}
 		err := unmarshal([]byte(qqlSingleErr), r)
 		expectedErr := &GqlErrorList{
-			Errors: gqlerror.List{{
-				Message: "Field 'nsodes' doesn't exist on type 'RepositoryConnection'",
-				Path:    path,
-				Locations: []gqlerror.Location{{
-					Line:   6,
-					Column: 4,
+			Errors: gqlerror.List{
+				&gqlerror.Error{
+					Message: "Field 'nsodes' doesn't exist on type 'RepositoryConnection'",
+					Path:    path,
+					Locations: []gqlerror.Location{{
+						Line:   6,
+						Column: 4,
+					}},
+					Extensions: map[string]interface{}{
+						"code":      "undefinedField",
+						"typeName":  "RepositoryConnection",
+						"fieldName": "nsodes",
+					},
 				}},
-				Extensions: map[string]interface{}{
-					"code":      "undefinedField",
-					"typeName":  "RepositoryConnection",
-					"fieldName": "nsodes",
-				},
-			}},
 		}
 		require.Equal(t, err, expectedErr)
 	})
@@ -66,7 +67,7 @@ func TestUnmarshal(t *testing.T) {
 		err := unmarshal([]byte(gqlMultipleErr), r)
 		expectedErr := &GqlErrorList{
 			Errors: gqlerror.List{
-				{
+				&gqlerror.Error{
 					Message: "Field 'nsodes' doesn't exist on type 'RepositoryConnection'",
 					Path:    path1,
 					Locations: []gqlerror.Location{{
@@ -79,7 +80,7 @@ func TestUnmarshal(t *testing.T) {
 						"fieldName": "nsodes",
 					},
 				},
-				{
+				&gqlerror.Error{
 					Message: "Variable $languageFirst is declared by GetUser but not used",
 					Path:    path2,
 					Locations: []gqlerror.Location{{
@@ -91,7 +92,7 @@ func TestUnmarshal(t *testing.T) {
 						"variableName": "languageFirst",
 					},
 				},
-				{
+				&gqlerror.Error{
 					Message: "Fragment LanguageFragment was defined, but not used",
 					Path:    path3,
 					Locations: []gqlerror.Location{{
@@ -115,19 +116,20 @@ func TestUnmarshal(t *testing.T) {
 		r := &fakeRes{}
 		err := unmarshal([]byte(gqlDataAndErr), r)
 		expectedErr := &GqlErrorList{
-			Errors: gqlerror.List{{
-				Message: "Field 'nsodes' doesn't exist on type 'RepositoryConnection'",
-				Path:    path,
-				Locations: []gqlerror.Location{{
-					Line:   6,
-					Column: 4,
+			Errors: gqlerror.List{
+				&gqlerror.Error{
+					Message: "Field 'nsodes' doesn't exist on type 'RepositoryConnection'",
+					Path:    path,
+					Locations: []gqlerror.Location{{
+						Line:   6,
+						Column: 4,
+					}},
+					Extensions: map[string]interface{}{
+						"code":      "undefinedField",
+						"typeName":  "RepositoryConnection",
+						"fieldName": "nsodes",
+					},
 				}},
-				Extensions: map[string]interface{}{
-					"code":      "undefinedField",
-					"typeName":  "RepositoryConnection",
-					"fieldName": "nsodes",
-				},
-			}},
 		}
 		require.Equal(t, err, expectedErr)
 	})

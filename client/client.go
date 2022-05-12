@@ -169,7 +169,7 @@ func unmarshal(data []byte, res interface{}) error {
 		return fmt.Errorf("failed to decode data %s: %w", string(data), err)
 	}
 
-	if resp.Errors != nil && len(resp.Errors) > 0 {
+	if len(resp.Errors) > 0 {
 		// try to parse standard graphql error
 		errors := &GqlErrorList{}
 		if e := json.Unmarshal(data, errors); e != nil {

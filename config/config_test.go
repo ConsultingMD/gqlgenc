@@ -103,7 +103,7 @@ func TestLoadConfig_LoadSchema(t *testing.T) {
 		config := &Config{
 			GQLConfig: &config.Config{},
 			Endpoint: &EndPointConfig{
-				URL: mockServer.URL,
+				URL: mockServer.URL, //nolint
 			},
 		}
 
@@ -120,12 +120,12 @@ func TestLoadConfig_LoadSchema(t *testing.T) {
 		config := &Config{
 			GQLConfig: &config.Config{},
 			Endpoint: &EndPointConfig{
-				URL: mockServer.URL,
+				URL: mockServer.URL, //nolint
 			},
 		}
 
 		err := config.LoadSchema(context.Background())
-		require.Equal(t, fmt.Sprintf("load remote schema failed: validation error: %s:0: OBJECT must define one or more fields.", mockServer.URL), err.Error())
+		require.Equal(t, fmt.Sprintf("load remote schema failed: validation error: %s:0: OBJECT must define one or more fields.", mockServer.URL), err.Error()) //nolint
 	})
 }
 
@@ -159,7 +159,7 @@ func newMockRemoteServer(t *testing.T, response interface{}) (mock *mockRemoteSe
 		})),
 	}
 
-	return mock, func() { mock.Close() }
+	return mock, func() { mock.Close() } //nolint
 }
 
 type responseFromFile string
