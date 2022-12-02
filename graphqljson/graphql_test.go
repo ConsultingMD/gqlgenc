@@ -5,9 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-
 	"github.com/Yamashou/gqlgenc/graphqljson"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestUnmarshalGraphQL(t *testing.T) {
@@ -485,7 +484,6 @@ func TestUnmarshalGraphQL_jsonRawMessage(t *testing.T) {
 		"number": 1,
 		"string": "normal string"
 	}`), &got)
-
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -561,6 +559,32 @@ func TestUnmarshalGraphQL_jsonRawMessageInFragment(t *testing.T) {
 		Value: "object value 2",
 	}
 
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Error(diff)
+	}
+}
+
+func TestUnmarshalGraphQL_map(t *testing.T) {
+	t.Parallel()
+	type query struct {
+		Outputs map[string]interface{}
+	}
+	var got query
+	err := graphqljson.UnmarshalData([]byte(`{
+			"outputs":{
+                                 "vpc":"1",
+                                 "worker_role_arn":"2"
+        	}
+	}`), &got)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := query{
+		map[string]interface{}{
+			"vpc":             "1",
+			"worker_role_arn": "2",
+		},
+	}
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Error(diff)
 	}

@@ -2,10 +2,11 @@ package clientv2
 
 import (
 	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/Yamashou/gqlgenc/graphqljson"
@@ -140,7 +141,14 @@ func (c *Client) do(_ context.Context, req *http.Request, _ *GQLRequestInfo, res
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		resp.Body, err = gzip.NewReader(resp.Body)
+		if err != nil {
+			return fmt.Errorf("gzip decode failed: %w", err)
+		}
+	}
+
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read response body: %w", err)
 	}

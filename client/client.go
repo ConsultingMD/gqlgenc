@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/Yamashou/gqlgenc/graphqljson"
@@ -59,6 +59,9 @@ func (c *Client) newRequest(ctx context.Context, operationName, query string, va
 	if err != nil {
 		return nil, fmt.Errorf("create request struct failed: %w", err)
 	}
+
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("Accept", "application/json; charset=utf-8")
 
 	for _, httpRequestOption := range c.HTTPRequestOptions {
 		httpRequestOption(req)
@@ -114,8 +117,6 @@ func (c *Client) Post(ctx context.Context, operationName, query string, respData
 	if err != nil {
 		return fmt.Errorf("don't create request: %w", err)
 	}
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	req.Header.Set("Accept", "application/json; charset=utf-8")
 
 	resp, err := c.Client.Do(req)
 	if err != nil {
@@ -123,7 +124,7 @@ func (c *Client) Post(ctx context.Context, operationName, query string, respData
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read response body: %w", err)
 	}
